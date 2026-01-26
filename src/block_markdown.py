@@ -206,3 +206,18 @@ def markdown_to_html_node(markdown):
 
     return ParentNode("div", children)
 
+def extract_title(markdown):
+    """
+    Extract the h1 header from markdown.
+    Returns the title text without the # prefix.
+    Raises ValueError if no h1 header is found.
+    """
+    lines = markdown.split("\n")
+
+    for line in lines:
+        line = line.strip()
+        if line.startswith("# "):
+            # Remove the "# " prefix and return
+            return line[2:].strip()
+
+    raise ValueError("No h1 header found in markdown")

@@ -5,6 +5,7 @@ from block_markdown import (
     block_to_block_type,
     BlockType,
     markdown_to_html_node,
+    extract_title,
 )
 
 
@@ -275,6 +276,37 @@ class TestMarkdownToHTMLNode(unittest.TestCase):
         self.assertIn("<ul><li>List item</li><li>Another item</li></ul>", html)
         self.assertIn("<blockquote>A quote</blockquote>", html)
         self.assertIn("<pre><code>code block\n</code></pre>", html)
+
+class TestExtractTitle(unittest.TestCase):
+    def test_extract_title_simple(self):
+        md = "# Hello"
+        title = extract_title(md)
+        self.assertEqual(title, "Hello")
+    
+    def test_extract_title_with_whitespace(self):
+        md = "#    Heading with spaces   "
+        title = extract_title(md)
+        self.assertEqual(title, "Heading with spaces")
+    
+    def test_extract_title_multiline(self):
+        md = "Some text\n\n# My Title\n\nMore text"
+        title = extract_title(md)
+        self.assertEqual(title, "My Title")
+    
+    def test_extract_title_first_h1(self):
+        md = "# First Title\n\n# Second Title"
+        title = extract_title(md)
+        self.assertEqual(title, "First Title")
+    
+    def test_extract_title_no_h1_raises_error(self):
+        md = "## Only h2\n\nNo h1 here"
+        with self.assertRaises(ValueError):
+            extract_title(md)
+    
+    def test_extract_title_empty_raises_error(self):
+        md = ""
+        with self.assertRaises(ValueError):
+            extract_title(md)
 
 
 if __name__ == "__main__":
